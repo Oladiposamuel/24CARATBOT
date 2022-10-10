@@ -18,5 +18,9 @@ router.patch('/resetpassword', adminController.resetPassword);
 
 router.post('/update-profit', isAdminAuth, adminController.updateProfit);
 
+router.get('/get-unvalidated-users', isAdminAuth, adminController.getUnvalidatedUsers);
+
+router.patch('/validate-user/:userId', isAdminAuth, adminController.validateUser);
+
 
 module.exports = router;

@@ -1,4 +1,4 @@
-const verifyAccount = (token)=> {
+const verifyAccount = (personnel, token)=> {
     const htmlDoc = (
         `<!DOCTYPE html>
             <html>
@@ -7,7 +7,7 @@ const verifyAccount = (token)=> {
             <style>
 
                 table {
-
+                    margin: 0 auto;
                 }
 
                 tr {
@@ -63,7 +63,7 @@ const verifyAccount = (token)=> {
                     Click button below to verify your account.
                     </p>
 
-                    <p class="text"> <a href = "http://localhost:8080/user/verify/${token}" > <button> Verify Account </button> </a> </p>
+                    <p class="text"> <a href = "http://localhost:8080/${personnel}/verify/${token}" > <button> Verify Account </button> </a> </p>
 
                     <p class="text"> If you did not make this change, kindly contact. </p>
 

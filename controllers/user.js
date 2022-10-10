@@ -139,12 +139,14 @@ exports.signupSub = async (req, res, next) => {
         {expiresIn: '1h'}
         )
 
+        const personnel = 'user';
+
         const info = await transport.sendMail({
             from: '24CARATBOT',
             to: email,
             subject: "Verify your account",
             //text: "Hello world?",
-            html: verifyAccount(verificationToken),
+            html: verifyAccount(personnel, verificationToken),
             headers: { 'x-cloudmta-class': 'standard' }
         })
 
@@ -194,12 +196,14 @@ exports.signupManaged = async (req, res, next) => {
         {expiresIn: '1h'}
         )
 
+        const personnel = 'user';
+
         const info = await transport.sendMail({
             from: '24CARATBOT',
             to: email,
             subject: "Verify your account",
             //text: "Hello world?",
-            html: verifyAccount(verificationToken),
+            html: verifyAccount(personnel, verificationToken),
             headers: { 'x-cloudmta-class': 'standard' }
         })
 
@@ -274,7 +278,11 @@ exports.login = async (req, res, next) => {
             throw error;
         }
 
-        
+        if (!savedUser.isVerified) {
+            const error = new Error('You have not verified your account! PLease verify your account.');
+            throw error;
+        }
+
         const token = jwt.sign({
             userId: savedUser._id,
             email: savedUser.email,

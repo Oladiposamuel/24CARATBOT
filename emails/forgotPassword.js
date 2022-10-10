@@ -7,7 +7,7 @@ const forgotPassword = (password)=> {
             <style>
 
                 table {
-
+                    margin: 0 auto;
                 }
 
                 tr {

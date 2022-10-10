@@ -36,6 +36,17 @@ class User {
             console.log(error);
         })
     }
+    
+    static findUserById(id) {
+        const db = getDb();
+        return db.collection('user').findOne({_id: id})
+        .then(result => {
+            return result;
+        })
+        .catch(error => {
+            console.log(error);
+        })
+    }
 
     static updateUserVerification(id) {
         const db = getDb();
@@ -95,6 +106,28 @@ class User {
     static updateManagedAccountType(email) {
         const db = getDb();
         return db.collection('user').updateOne({email: email}, {$set: { accountType: "managed account" }})
+        .then(result => {
+            return result;
+        })
+        .catch(error => {
+            console.log(error);
+        })
+    }
+
+    static getUnvalidatedUsers() {
+        const db = getDb();
+        return db.collection('user').find({accountStatus: "not validated"}).toArray()
+        .then(result => {
+            return result;
+        })
+        .catch(error => {
+            console.log(error);
+        })
+    }
+
+    static validateUser(id) {
+        const db = getDb();
+        return db.collection('user').updateOne({_id: id}, {$set: { accountStatus: "validated" }})
         .then(result => {
             return result;
         })

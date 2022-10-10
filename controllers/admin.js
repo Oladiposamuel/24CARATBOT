@@ -7,6 +7,7 @@ const mongodb = require('mongodb');
 const ObjectId = mongodb.ObjectId;
 const crypto = require('crypto');
 const forgotPasswordMail = require('../emails/forgotPassword.js');
+const User = require('../models/user.js');
 
 let transport = nodemailer.createTransport({
     service: 'gmail',
@@ -44,16 +45,18 @@ exports.signup = async (req, res, next) => {
             email: savedAdminDetails.email,
             adminId: savedAdminDetails._id,
         },
-        'verificationadminsecretprivatekey',
+        'verificationadminsecretprivatekey', 
         {expiresIn: '1h'}
         )
+
+        const personnel = 'admin';
 
         const info = await transport.sendMail({
             from: '24CARATBOT',
             to: email,
             subject: "Verify your account",
             //text: "Hello world?",
-            html: verifyAccount(verificationToken),
+            html: verifyAccount(personnel, verificationToken),
             headers: { 'x-cloudmta-class': 'standard' }
         })
 
@@ -128,8 +131,13 @@ exports.login = async (req, res, next) => {
             throw error;
         }
 
+        if (!savedAdmin.isAdmin) {
+            const error = new Error('You have not verified your account! PLease verify your account.');
+            throw error;
+        }
+
         
-        const token = sign({
+        const token = jwt.sign({
             adminId: savedAdmin._id,
             email: savedAdmin.email,
         },
@@ -254,6 +262,26 @@ exports.updateProfit = async (req, res, next) => {
 
     const profit = req.body.profit;
     
-    res.status(201).send({message: 'Profit updated', profit: profit});
+    res.status(201).send({hasError: false, code: 201, message: 'Profit updated', profit: profit});
+
+}
+
+exports.getUnvalidatedUsers = async (req, res, next) => {
+
+    const unvalidatedUsers = await User.getUnvalidatedUsers();
+
+    res.status(200).send({hasError: false, code: 200, message: 'unvalidated users', unvalidatedUsers: unvalidatedUsers});
+
+}
+
+exports.validateUser = async (req, res, next) => {
+
+    const userId = ObjectId(req.params.userId);
+
+    const user = await User.validateUser(userId);
+
+    const updatedUser = await User.findUserById(userId);
+
+    res.status(201).send({hasError: false, code: 201, message: 'User account validated', updatedUser: updatedUser});
 
 }

@@ -7,7 +7,7 @@ const renewSubscription = (lastName)=> {
             <style>
 
                 table {
-
+                    margin: 0 auto;
                 }
 
                 tr {
