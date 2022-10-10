@@ -12,6 +12,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(bodyParser.json());
 
+app.use(
+    express.json({
+      verify: (req, res, buf) => {
+        req.rawBody = buf;
+      },
+    })
+);
+
 app.use('/user', userRoutes);
 
 app.use('/admin', adminRoutes);

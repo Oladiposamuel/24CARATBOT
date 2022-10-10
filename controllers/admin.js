@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const verifyAccount = require('../emails/verifyAccount.js');
 const mongodb = require('mongodb');
 const ObjectId = mongodb.ObjectId;
-const crypto = require('crypto-js');
+const crypto = require('crypto');
 const forgotPasswordMail = require('../emails/forgotPassword.js');
 
 let transport = nodemailer.createTransport({
@@ -247,5 +247,13 @@ exports.resetPassword = async (req, res, next) => {
         console.log(error);
         next(error);
     }
+
+}
+
+exports.updateProfit = async (req, res, next) => {
+
+    const profit = req.body.profit;
+    
+    res.status(201).send({message: 'Profit updated', profit: profit});
 
 }
