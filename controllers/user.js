@@ -579,3 +579,7 @@ exports.withdrawalRequest = async (req, res, next) => {
 
     res.status(201).send({hasError: false, code: 201, message: 'withdrawal request successful', withdrawal: withdrawal});
 }
+
+exports.test = async (req, res, next) => {
+    res.send('test!');
+}

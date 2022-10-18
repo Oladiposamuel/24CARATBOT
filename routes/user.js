@@ -34,4 +34,6 @@ router.get('/get-user-details', isUserAuth, userController.getUserDetails);
 
 router.post('/withdrawal-request', isUserAuth, userController.withdrawalRequest);
 
+router.get('/test', userController.test);
+
 module.exports = router;
