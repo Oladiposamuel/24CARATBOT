@@ -2,11 +2,20 @@ const express = require('express');
 const {mongoConnect} = require('./utils/database');
 const dotenv = require('dotenv').config();
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const userRoutes = require('./routes/user.js');
 const adminRoutes = require('./routes/admin.js');
 
 const app = express();
+
+const corsOptions = {
+    origin: '*',
+    credentials: true,
+    optionSuccessStatus: 200,
+}
+
+app.use(cors(corsOptions));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 

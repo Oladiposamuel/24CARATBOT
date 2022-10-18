@@ -22,5 +22,12 @@ router.get('/get-unvalidated-users', isAdminAuth, adminController.getUnvalidated
 
 router.patch('/validate-user/:userId', isAdminAuth, adminController.validateUser);
 
+router.get('/get-all-users', isAdminAuth, adminController.getAllUsers);
+
+router.get('/get-all-subusers', isAdminAuth, adminController.getAllSubUsers);
+
+router.get('/get-all-managedusers', isAdminAuth, adminController.getAllManagedUsers);
+
+router.get('/get-all-withdrawals', isAdminAuth, adminController.getAllWithdrawals);
 
 module.exports = router;

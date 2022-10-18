@@ -8,6 +8,8 @@ const ObjectId = mongodb.ObjectId;
 const crypto = require('crypto');
 const forgotPasswordMail = require('../emails/forgotPassword.js');
 const User = require('../models/user.js');
+const Withdrawal = require('../models/withdrawals.js');
+const Profit = require('../models/profit.js');
 
 let transport = nodemailer.createTransport({
     service: 'gmail',
@@ -56,7 +58,7 @@ exports.signup = async (req, res, next) => {
             to: email,
             subject: "Verify your account",
             //text: "Hello world?",
-            html: verifyAccount(personnel, verificationToken),
+            html: verifyAccount(personnel, verificationToken, firstName),
             headers: { 'x-cloudmta-class': 'standard' }
         })
 
@@ -132,7 +134,7 @@ exports.login = async (req, res, next) => {
         }
 
         if (!savedAdmin.isAdmin) {
-            const error = new Error('You have not verified your account! PLease verify your account.');
+            const error = new Error('You are yet to verify your account! Please verify your account.');
             throw error;
         }
 
@@ -260,28 +262,99 @@ exports.resetPassword = async (req, res, next) => {
 
 exports.updateProfit = async (req, res, next) => {
 
-    const profit = req.body.profit;
-    
-    res.status(201).send({hasError: false, code: 201, message: 'Profit updated', profit: profit});
+    try {
 
+        const amount = req.body.amount;
+        const profit = new Profit(amount);
+        const savedProfit = profit.save();
+        const profitArray = Profit.findAllProfit();
+
+        res.status(201).send({hasError: false, code: 201, message: 'Profit updated', profit: profitArray});
+
+    } catch (error) {
+        next(error);
+    }
 }
 
 exports.getUnvalidatedUsers = async (req, res, next) => {
 
-    const unvalidatedUsers = await User.getUnvalidatedUsers();
+    try {
+        
+        const unvalidatedUsers = await User.getUnvalidatedUsers();
+        res.status(200).send({hasError: false, code: 200, message: 'unvalidated users', unvalidatedUsers: unvalidatedUsers});
 
-    res.status(200).send({hasError: false, code: 200, message: 'unvalidated users', unvalidatedUsers: unvalidatedUsers});
+    } catch (error) {
+        next(error);
+    }
 
 }
 
 exports.validateUser = async (req, res, next) => {
 
-    const userId = ObjectId(req.params.userId);
+    try {
 
-    const user = await User.validateUser(userId);
+        const userId = ObjectId(req.params.userId);
 
-    const updatedUser = await User.findUserById(userId);
+        const user = await User.validateUser(userId);
 
-    res.status(201).send({hasError: false, code: 201, message: 'User account validated', updatedUser: updatedUser});
+        const updatedUser = await User.findUserById(userId);
+
+        res.status(201).send({hasError: false, code: 201, message: 'User account validated', updatedUser: updatedUser});
+
+        } catch(error) {
+        next(error);
+    }
 
 }
+
+exports.getAllUsers = async (req, res, next) => {
+
+    try {
+        const allUsers = await User.findAllUsers();
+
+        res.status(200).send({hasError: false, code: 200, message: 'All Users', allUsers: allUsers});
+    } catch(error) {
+        next(error);
+    }
+
+}
+
+exports.getAllSubUsers = async (req, res, next) => {
+
+    try {
+
+        const subUsers = await User.getAllSubUsers();
+
+        res.status(200).send({hasError: false, code: 200, message: 'All Users', subUsers: subUsers});
+
+    } catch(error) {
+        next(error);
+    }
+}
+
+exports.getAllManagedUsers = async (req, res, next) => {
+
+    try {
+
+        const managedUsers = await User.getAllManagedUsers();
+
+        res.status(200).send({hasError: false, code: 200, message: 'All Users', managedUsers: managedUsers});
+
+    } catch(error) {
+        next(error);
+    }
+
+}
+
+exports.getAllWithdrawals = async (req, res, next) => {
+    try{
+
+        const allWithdrawals = await Withdrawal.getAllWithdrawals();
+
+        res.status(200).send({hasError: false, code: 200, message: 'All Withdrawals', allWithdrawals: allWithdrawals});
+
+    } catch(error) {
+        next(error);
+    }
+}
+

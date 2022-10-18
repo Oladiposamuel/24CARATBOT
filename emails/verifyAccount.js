@@ -1,4 +1,4 @@
-const verifyAccount = (personnel, token)=> {
+const verifyAccount = (personnel, token, firstName)=> {
     const htmlDoc = (
         `<!DOCTYPE html>
             <html>
@@ -57,7 +57,7 @@ const verifyAccount = (personnel, token)=> {
                 </tr>
                 
                 <tr>
-                    <p class="text">Hello Samuel,</p>
+                    <p class="text">Hello ${firstName},</p>
 
                     <p class="text">
                     Click button below to verify your account.

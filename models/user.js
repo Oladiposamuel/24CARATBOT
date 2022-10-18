@@ -13,11 +13,24 @@ class User {
         this.tradingDetails = null;
         this.accountStatus = "not validated";
         this.accountType = null;
+        this.isSubscriptionActive = false;
+        this.dateAdded = new Date();
     }
 
     save() {
         const db = getDb();
         return db.collection('user').insertOne(this)
+        .then(result => {
+            return result;
+        })
+        .catch(error => {
+            console.log(error);
+        })
+    }
+
+    static findAllUsers() {
+        const db = getDb();
+        return db.collection('user').find().toArray()
         .then(result => {
             return result;
         })
@@ -128,6 +141,28 @@ class User {
     static validateUser(id) {
         const db = getDb();
         return db.collection('user').updateOne({_id: id}, {$set: { accountStatus: "validated" }})
+        .then(result => {
+            return result;
+        })
+        .catch(error => {
+            console.log(error);
+        })
+    }
+
+    static getAllSubUsers () {
+        const db = getDb();
+        return db.collection('user').find({accountType: "subscription account"}).toArray()
+        .then(result => {
+            return result;
+        })
+        .catch(error => {
+            console.log(error);
+        })
+    }
+
+    static getAllManagedUsers() {
+        const db = getDb();
+        return db.collection('user').find({accountType: "managed account"}).toArray()
         .then(result => {
             return result;
         })

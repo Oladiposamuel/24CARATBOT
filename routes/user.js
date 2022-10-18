@@ -30,4 +30,8 @@ router.get('/managedaccount-payment', isUserAuth, userController.managedAccountP
 
 router.post('/trading-details', isUserAuth, userController.submitTradingDetails);
 
+router.get('/get-user-details', isUserAuth, userController.getUserDetails);
+
+router.post('/withdrawal-request', isUserAuth, userController.withdrawalRequest);
+
 module.exports = router;

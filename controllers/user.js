@@ -12,6 +12,7 @@ const crypto = require('crypto');
 const forgotPasswordMail = require('../emails/forgotPassword.js');
 const coinbase = require('coinbase-commerce-node');
 const schedule = require('node-schedule');
+const Withdrawal = require('../models/withdrawals');
 
 const Client = coinbase.Client;
 Client.init(process.env.COINBASE_API_KEY);
@@ -136,7 +137,7 @@ exports.signupSub = async (req, res, next) => {
             userId: savedUserDetails._id,
         },
         'verificationsecretprivatekey',
-        {expiresIn: '1h'}
+        //{expiresIn: '1h'}
         )
 
         const personnel = 'user';
@@ -146,13 +147,13 @@ exports.signupSub = async (req, res, next) => {
             to: email,
             subject: "Verify your account",
             //text: "Hello world?",
-            html: verifyAccount(personnel, verificationToken),
+            html: verifyAccount(personnel, verificationToken, firstName),
             headers: { 'x-cloudmta-class': 'standard' }
         })
 
         console.log(info.response); 
 
-        res.status(201).send({message: 'User created', code: 201, savedUser: savedUser, verificationToken: verificationToken});
+        res.status(201).send({message: 'User created', code: 201, savedUser: savedUser});
     } catch (error) {
         next(error);
     }
@@ -193,7 +194,7 @@ exports.signupManaged = async (req, res, next) => {
             userId: savedUserDetails._id,
         },
         'verificationsecretprivatekey',
-        {expiresIn: '1h'}
+        //{expiresIn: '1h'}
         )
 
         const personnel = 'user';
@@ -203,13 +204,13 @@ exports.signupManaged = async (req, res, next) => {
             to: email,
             subject: "Verify your account",
             //text: "Hello world?",
-            html: verifyAccount(personnel, verificationToken),
+            html: verifyAccount(personnel, verificationToken, firstName),
             headers: { 'x-cloudmta-class': 'standard' }
         })
 
         console.log(info.response); 
 
-        res.status(201).send({message: 'User created', code: 201, savedUser: savedUser, verificationToken: verificationToken});
+        res.status(201).send({message: 'User created', code: 201, savedUser: savedUser});
     } catch (error) {
         next(error);
     }
@@ -288,7 +289,7 @@ exports.login = async (req, res, next) => {
             email: savedUser.email,
         },
         'usersecretprivatekey',
-        {expiresIn: '10h'}
+        {expiresIn: '1h'}
         );
 
         res.status(200).send({hasError: false, code: 200, message: 'Logged In!', user: savedUser, token: token});
@@ -536,11 +537,16 @@ exports.submitTradingDetails = async (req, res, next) => {
 
         const id = ObjectId(req.userId);
         const email = req.email;
-        const tradingDetails = req.body.tradingDetails;
+        const tradingDetails = req.body.tradingDetails;  
+        console.log(tradingDetails);
 
-        const updateTradingDetails = await User.updateTradingDetails(id, tradingDetails);
+        const updateTradingDetails = await User.updateTradingDetails(id, tradingDetails);  
+
+        console.log(id); 
 
         const savedUser = await User.findUser(email);
+
+        console.log(savedUser);
 
         res.status(201).send({hasError: false, code: 201, message: 'trading details updated!', user: savedUser});
 
@@ -548,4 +554,28 @@ exports.submitTradingDetails = async (req, res, next) => {
         next(error);
     }
 
+}
+
+exports.getUserDetails = async (req, res, next) => {
+
+    const id = ObjectId(req.userId);
+
+    const userDetails = await User.findUserById(id);
+
+    res.status(200).send({hasError: false, code: 200, message: 'User details', userDetails: userDetails});
+}
+
+exports.withdrawalRequest = async (req, res, next) => {
+
+    const id = ObjectId(req.userId);
+
+    const amount = req.body.amount;
+
+    const user = await User.findUserById(id);
+
+    const withdrawal = new Withdrawal(user, amount);
+
+    const savedWithdrawal = withdrawal.save();
+
+    res.status(201).send({hasError: false, code: 201, message: 'withdrawal request successful', withdrawal: withdrawal});
 }

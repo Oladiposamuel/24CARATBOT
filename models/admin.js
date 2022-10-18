@@ -8,6 +8,7 @@ class Admin {
         this.email = email;
         this.password = password;
         this.isAdmin = false;
+        this.dateAdded = new Date();
     }
 
     save() {
