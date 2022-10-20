@@ -267,13 +267,26 @@ exports.updateProfit = async (req, res, next) => {
         const amount = req.body.amount;
         const profit = new Profit(amount);
         const savedProfit = profit.save();
-        const profitArray = Profit.findAllProfit();
 
-        res.status(201).send({hasError: false, code: 201, message: 'Profit updated', profit: profitArray});
+        res.status(201).send({hasError: false, code: 201, message: 'Profit updated'});
 
     } catch (error) {
         next(error);
     }
+}
+
+exports.getAllProfit = async (req, res, next) => {
+
+    try {
+
+        const allProfit = await Profit.findAllProfit();
+
+        res.status(200).send({hasError: false, code: 200, message: 'All Profit', allProfit: allProfit});
+
+    } catch(error) {
+        next(error);
+    }
+
 }
 
 exports.getUnvalidatedUsers = async (req, res, next) => {
@@ -356,5 +369,21 @@ exports.getAllWithdrawals = async (req, res, next) => {
     } catch(error) {
         next(error);
     }
+}
+
+exports.getUser = async (req, res, next) => {
+
+    try {
+
+        const id = ObjectId(req.params.userId);
+
+        const user = await User.findUserById(id);
+
+        res.status(200).send({hasError: false, code: 200, message: 'User data', user: user});
+
+    } catch(error) {
+        next(error);
+    }
+
 }
 

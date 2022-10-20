@@ -14,6 +14,7 @@ class User {
         this.accountStatus = "not validated";
         this.accountType = null;
         this.isSubscriptionActive = false;
+        this.wallet = null;
         this.dateAdded = new Date();
     }
 

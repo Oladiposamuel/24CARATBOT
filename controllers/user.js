@@ -13,6 +13,7 @@ const forgotPasswordMail = require('../emails/forgotPassword.js');
 const coinbase = require('coinbase-commerce-node');
 const schedule = require('node-schedule');
 const Withdrawal = require('../models/withdrawals');
+const Profit = require('../models/profit');
 
 const Client = coinbase.Client;
 Client.init(process.env.COINBASE_API_KEY);
@@ -578,6 +579,22 @@ exports.withdrawalRequest = async (req, res, next) => {
     const savedWithdrawal = withdrawal.save();
 
     res.status(201).send({hasError: false, code: 201, message: 'withdrawal request successful', withdrawal: withdrawal});
+}
+
+exports.getProfit = async (req, res, next) => {
+
+    try {
+
+        const allProfit = await Profit.findAllProfit();
+
+        const profit = allProfit[allProfit.length - 1];
+
+        res.status(200).send({hasError: false, code: 200, message: 'Latest Profit', profit: profit});
+
+    } catch(error) {
+        next(error);
+    }
+
 }
 
 exports.test = async (req, res, next) => {
