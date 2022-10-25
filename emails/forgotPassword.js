@@ -53,14 +53,14 @@ const forgotPassword = (password)=> {
             
             <table>
                 <tr class="tableContent">
-                    <h3 class= "headerText">ACCOUNT VERIFICATION </h3> 
+                    <h3 class= "headerText">FORGOT PASSWORD </h3> 
                 </tr>
                 
                 <tr>
                     <p class="text">Hello Samuel,</p>
 
                     <p class="text">
-                        We received a request to reset your password. Your new password is ${password}.
+                        We received a request to reset your password. Your new password is <strong>${password}</strong>.
                         You can change the your password later in your account settings.
                     </p>
 

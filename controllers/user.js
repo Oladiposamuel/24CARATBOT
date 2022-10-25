@@ -154,7 +154,7 @@ exports.signupSub = async (req, res, next) => {
 
         console.log(info.response); 
 
-        res.status(201).send({message: 'User created', code: 201, savedUser: savedUser});
+        res.status(201).send({message: 'User created', code: 201, savedUser: savedUser, verificationToken: verificationToken});
     } catch (error) {
         next(error);
     }
@@ -211,7 +211,7 @@ exports.signupManaged = async (req, res, next) => {
 
         console.log(info.response); 
 
-        res.status(201).send({message: 'User created', code: 201, savedUser: savedUser});
+        res.status(201).send({message: 'User created', code: 201, savedUser: savedUser, verificationToken: verificationToken});
     } catch (error) {
         next(error);
     }
@@ -310,7 +310,7 @@ exports.forgotPassword = async (req, res, next) => {
         const savedUser = await User.findUser(email);
     
         if(!savedUser) {
-            const error = new Error('User does not exist!');
+            const error = new Error(' User with Email does not exist!');
             throw error;
         }
     
@@ -318,7 +318,7 @@ exports.forgotPassword = async (req, res, next) => {
     
         const id = ObjectId(savedUser._id);
     
-        let password = crypto.randomBytes(10).toString('hex'); 
+        let password = crypto.randomBytes(4).toString('hex'); 
         console.log(password);
     
         const hashPassword = await bcrypt.hash(password, 10);
@@ -444,6 +444,50 @@ exports.subPayment = async (req, res, next) => {
 
 }
 
+exports.depositPayment = async (req, res, next) => {
+    try {
+
+        const amount = req.body.amount;
+        console.log(amount);
+
+        const email = req.email;
+
+        if (amount < 100) {
+            const error = new Error('Least deposit amount is $100');
+            throw error;
+        }
+
+        const savedUser = await User.findUser(email);
+        const id = savedUser._id;
+        const lastName = savedUser.lastName;
+        
+        const chargeData = {
+            name: "Subscription payment",
+            description: "payment for subscription platform",
+            local_price: {
+              amount: amount,
+              currency: "USD",
+            },
+            pricing_type: "fixed_price",
+            metadata: {
+              customer_id: id,
+              customer_name: lastName,
+            },
+            redirect_url: `https://a573-102-89-40-111.eu.ngrok.io/user/success-payment`, 
+            cancel_url: `https://a573-102-89-40-111.eu.ngrok.io/user/cancel-payment`,
+        };
+        
+        const charge = await Charge.create(chargeData);
+    
+        console.log(charge);
+    
+        res.status(201).send({hasError: false, code: 201, message: 'Charge for managed account deposit has been created', charge: charge});
+
+    } catch(error) {
+        next(error);
+    }
+}
+
 exports.successPayment = async (req, res, next) => {
     res.send({message: 'payment successful'});
 }
@@ -454,13 +498,14 @@ exports.cancelPayment = async (req, res, next) => {
 
 exports.paymentHandler = async (req, res, next) => {
 
-  const rawBody = req.rawBody;
-  const signature = req.headers["x-cc-webhook-signature"];
-  const webhookSecret = process.env.COINBASE_WEBHOOK_SECRET;
+    try {
+    const rawBody = req.rawBody;
+    const signature = req.headers["x-cc-webhook-signature"];
+    const webhookSecret = process.env.COINBASE_WEBHOOK_SECRET;
 
-  let event;
+    let event;
 
-  try {
+
     event = Webhook.verifyEventBody(rawBody, signature, webhookSecret);
     // console.log(event);
 

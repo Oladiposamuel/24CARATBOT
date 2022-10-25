@@ -63,7 +63,7 @@ const verifyAccount = (personnel, token, firstName)=> {
                     Click button below to verify your account.
                     </p>
 
-                    <p class="text"> <a href = "https://24caratbot-production.up.railway.app/${personnel}/verify/${token}" > <button> Verify Account </button> </a> </p>
+                    <p class="text"> <a href = "http://localhost:3000/verification" > <button> Verify Account </button> </a> </p>
 
                     <p class="text"> If you did not make this change, kindly contact. </p>
 

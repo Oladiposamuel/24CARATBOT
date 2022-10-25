@@ -22,7 +22,7 @@ router.get('/get-all-profit', isAdminAuth, adminController.getAllProfit);
 
 router.get('/get-unvalidated-users', isAdminAuth, adminController.getUnvalidatedUsers);
 
-router.patch('/validate-user/:userId', isAdminAuth, adminController.validateUser);
+router.get('/validate-user/:userId', isAdminAuth, adminController.validateUser);
 
 router.get('/get-all-users', isAdminAuth, adminController.getAllUsers);
 
@@ -32,6 +32,10 @@ router.get('/get-all-managedusers', isAdminAuth, adminController.getAllManagedUs
 
 router.get('/get-all-withdrawals', isAdminAuth, adminController.getAllWithdrawals);
 
+router.get('/get-withdrawal-requests', isAdminAuth, adminController.getWithdrawalRequests);
+
 router.get('/get-user/:userId', isAdminAuth, adminController.getUser);
+
+router.get('/confirm-withdrawal/:requestId', isAdminAuth, adminController.confirmWithdrawal);
 
 module.exports = router;

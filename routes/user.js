@@ -16,9 +16,11 @@ router.post('/login', userController.login);
 
 router.post('/forgot-password', userController.forgotPassword);
 
-router.patch('/reset-password', userController.resetPassword);
+router.patch('/reset-password', isUserAuth, userController.resetPassword);
 
 router.get('/sub-payment', isUserAuth, userController.subPayment);
+
+router.post('/deposit-payment', isUserAuth, userController.depositPayment);
 
 router.get('/success-payment', isUserAuth, userController.successPayment);
 

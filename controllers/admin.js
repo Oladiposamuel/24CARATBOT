@@ -371,6 +371,18 @@ exports.getAllWithdrawals = async (req, res, next) => {
     }
 }
 
+exports.getWithdrawalRequests = async (req, res, next) => {
+    try {
+
+        const requests = await Withdrawal.getWithdrawalRequests();
+
+        res.status(200).send({hasError: false, code: 200, message: 'Withdrawal requests', requests: requests});
+
+    } catch(error) {
+        next(error);
+    }
+}
+
 exports.getUser = async (req, res, next) => {
 
     try {
@@ -385,5 +397,21 @@ exports.getUser = async (req, res, next) => {
         next(error);
     }
 
+}
+
+exports.confirmWithdrawal = async (req, res, next) => {
+    try {
+
+        const requestId = new ObjectId(req.params.requestId);
+
+        await Withdrawal.confirmWithdrawalRequest(requestId);
+
+        const updatedRequest = await Withdrawal.getWithdrawalById(requestId);
+
+        res.status(201).send({hasError: false, code: 201, message: 'Withdrawal processed!', updatedRequest: updatedRequest});
+
+    } catch(error) {
+        next(error);
+    }
 }
 
